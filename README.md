@@ -1,45 +1,37 @@
-# RisingOS 9 / Android 17 — Google Pixel 4 XL (coral)
+# RisingOS Android 17 — Google Pixel 4 XL (coral)
 
-This repository describes the coral bring-up using the previously working
-InfinityX Android 17 device, vendor and kernel sources.
+Maintainer: **Hecker**  
+Upstream: [RisingOS-Revived/android](https://github.com/RisingOS-Revived/android), branch `seventeen`.
 
-## Status
+## Source import status
 
-- RisingOS upstream: `RisingOS-Revived/android`, branch `seventeen`
-- Target device: Google Pixel 4 XL / coral
-- Maintainer: Hecker
-- The three RisingOS device/vendor/kernel repositories must be populated before `repo sync` can use this manifest.
-- No successful RisingOS build or boot has been verified yet.
+The three coral source repositories have been populated from the known-working
+InfinityX `cnb-Latest-stable` branches. The original InfinityX repositories
+were not modified.
 
-## 1. Copy and adapt the source repositories
+| Component | RisingOS repository | Source |
+|---|---|---|
+| Device tree | [risingos-coral-dt](https://github.com/its-hecker/risingos-coral-dt) | infinity_cnb_android_device_google_coral |
+| Vendor | [risingos-coral-vendor](https://github.com/its-hecker/risingos-coral-vendor) | infinity_cnb_proprietary_vendor_google_coral |
+| Kernel | [risingos-coral-kernel](https://github.com/its-hecker/risingos-coral-kernel) | infinity_cnb_kernel_google_msm-4.14 |
 
-On a Linux machine with `git`, `git-lfs`, `python3`, sufficient free disk space,
-and authentication to push to its-hecker's GitHub repositories:
+The device tree has been adapted for RisingOS with `RISING_MAINTAINER=Hecker`,
+`WITH_GMS=true`, and LineageOS-based product configuration. Device-specific
+Pixel 4 XL camera, 3D Face Unlock, Motion Sense, and other compatibility files
+were copied, though functionality on RisingOS remains **untested**.
 
-```bash
-git clone https://github.com/its-hecker/Risingos-coral-localmanifest.git
-PUBLISH=1 bash Risingos-coral-localmanifest/port-from-infinity.sh
-```
+The kernel copy preserves the `KernelSU` submodule reference and the full
+audio driver tree. It still requires the submodule source to be accessible
+when checked out.
 
-The script copies the `cnb-Latest-stable` branches from:
+The vendor repository retains the original external Git LFS configuration
+(`https://lfs.undocumented.software/lfs/blobs.git/info/lfs`). Its availability
+remains a dependency for fetching the actual proprietary binary files.
 
-- `infinity_cnb_android_device_google_coral` to `risingos-coral-dt`
-- `infinity_cnb_proprietary_vendor_google_coral` to `risingos-coral-vendor`
-- `infinity_cnb_kernel_google_msm-4.14` to `risingos-coral-kernel`
+The original `port-from-infinity.sh` is retained as an archival source-import
+recipe. **Do not rerun it on the now-populated RisingOS repositories**.
 
-It keeps the InfinityX repositories read-only, uses `Hecker` as the author of
-the RisingOS adaptation commit, and will not force-push into a populated target.
-
-The vendor repository uses an **external Git LFS endpoint** configured by its
-existing `.lfsconfig`. The script preserves the configuration and copies Git
-pointers, not a new copy of all binary LFS payloads to GitHub. The endpoint must
-remain accessible for syncing the resulting vendor checkout.
-
-Set `PUBLISH=0` (the default) to prepare local copies without pushing. The
-script refuses to overwrite an existing directory in
-`$HOME/risingos-coral-seed`.
-
-## 2. Initialize RisingOS on a fresh build machine
+## First RisingOS checkout
 
 ```bash
 mkdir -p ~/risingos-coral
@@ -49,9 +41,7 @@ git clone https://github.com/its-hecker/Risingos-coral-localmanifest.git .repo/l
 repo sync -c --fail-fast --no-clone-bundle --no-tags -j4
 ```
 
-Only run this after all three target repositories have been populated.
-
-## 3. First build
+## First compilation attempt
 
 ```bash
 cd ~/risingos-coral
@@ -60,12 +50,7 @@ riseup coral userdebug
 rise b
 ```
 
-If the product selection or compilation fails, preserve the complete output
-and address the actual RisingOS-specific incompatibility before flashing.
-The source carries over the InfinityX 3D Face Unlock, Motion Sense, Google
-Camera, Lunaris Dolby, vendor blobs, and floral kernel implementation, but none
-are certified working on RisingOS until tested.
-
-The `coral.xml` manifest also supplies `ElmyraService` from LineageOS
-`lineage-24.0` and the optional Lunaris Dolby tree. This is an experimental
-port; retain a known-working ROM and recovery.
+The local manifest also adds Lunaris Dolby and ElmyraService. This is
+currently **a source port, not a validated booting ROM**. Resolve any
+RisingOS-specific build, HAL, SELinux, partition, or runtime issues before
+considering a release.
