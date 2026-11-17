@@ -72,7 +72,13 @@ git -C "$ROOT/dt" -c user.name=Hecker \
 echo "Prepared separate sources in $ROOT"
 if [[ "$PUBLISH" == 1 ]]; then
     for key in dt vendor kernel; do
-        git -C "$ROOT/$key" push --set-upstream rising HEAD:refs/heads/main
+        if [[ "$key" == vendor ]]; then
+            # Vendor LFS objects remain on the pre-existing external LFS server.
+            # Do not attempt to upload them to GitHub LFS via the pre-push hook.
+            git -C "$ROOT/$key" -c core.hooksPath=/dev/null push --set-upstream rising HEAD:refs/heads/main
+        else
+            git -C "$ROOT/$key" push --set-upstream rising HEAD:refs/heads/main
+        fi
     done
     echo "Published all three RisingOS repositories."
 else
