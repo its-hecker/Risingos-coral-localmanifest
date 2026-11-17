@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="hecker-rising" fetch="https://github.com/its-hecker" />
+  <remote name="lineage-coral" fetch="https://github.com/LineageOS" />
+
+  <project name="risingos-coral-dt"
+           path="device/google/coral"
+           remote="hecker-rising"
+           revision="main" />
+
+  <project name="risingos-coral-vendor"
+           path="vendor/google/coral"
+           remote="hecker-rising"
+           revision="main" />
+
+  <project name="risingos-coral-kernel"
+           path="kernel/google/msm-4.14"
+           remote="hecker-rising"
+           revision="main" />
+
+  <project name="vendor_lunaris_dolby"
+           path="vendor/lunaris/dolby"
+           remote="hecker-rising"
+           revision="main" />
+
+  <project name="android_packages_apps_ElmyraService"
+           path="packages/apps/ElmyraService"
+           remote="lineage-coral"
+           revision="lineage-24.0" />
+</manifest>
